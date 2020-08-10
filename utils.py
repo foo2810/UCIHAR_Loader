@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from pathlib import Path
+from typing import Union, Optional
 
 __all__ = ['UCIHAR']
 
@@ -26,7 +27,26 @@ class UCIHAR(object):
         self.test_metas = pd.concat([test_labels, test_subjects], axis=1)
         self.test_metas.columns = ['activity', 'person_id']
    
-    def load_data(self, train=True, person_list=None):
+    def load_data(self, train:bool=True, person_list:Optional[list]=None) -> tuple:
+        """Sliding-Windowをロード
+
+        Parameters
+        ----------
+        train: bool
+            select train data or test data. if True then return train data.
+        person_list: Option[list]
+            specify persons.
+       
+        Returns
+        -------
+        sensor_data:
+            sliding-windows
+        labels:
+            activity labels
+        person_id_list:
+            the list of person id
+        """
+
         if train:
             x = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_x_train.txt'), sep='\s+', header=None).to_numpy()
             y = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_y_train.txt'), sep='\s+', header=None).to_numpy()
@@ -37,7 +57,7 @@ class UCIHAR(object):
             y = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_y_test.txt'), sep='\s+', header=None).to_numpy()
             z = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_z_test.txt'), sep='\s+', header=None).to_numpy()
             metas = self.test_metas
-
+ 
         flags = np.zeros((x.shape[0],), dtype=np.bool)
         if person_list is None: person_list = np.array(UCIHAR.all_person_id)
         for person_id in person_list:
