@@ -19,30 +19,6 @@ UCI HAR Dataset + train + Inertial Signals +
                 :
 ```
 
-## Activities and IDs
-
-| ID | Activities | 
-|:---:|:-----:|
-|1  | lying |
-|2  | sitting |
-|3  | standing |
-|4  | walking |
-|5  | running |
-|7  | cycling |
-|8  | nordic_walking |
-|9  | watching_TV |
-|10 | computer_work |
-|11 | car_driving |
-|12 | ascending stairs |
-|13 | descending stairs |
-|16 | vacuum_cleaning |
-|17 | ironing |
-|18 | folding_laundry |
-|19 | house_cleaning |
-|20 | playing_soccer |
-|24 | rope_jumping |
-|0  | other |
-
 ## Sample Code
 
 ```python
