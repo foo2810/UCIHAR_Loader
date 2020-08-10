@@ -27,7 +27,7 @@ class UCIHAR(object):
         self.test_metas = pd.concat([test_labels, test_subjects], axis=1)
         self.test_metas.columns = ['activity', 'person_id']
    
-    def load_data(self, train:bool=True, person_list:Optional[list]=None) -> tuple:
+    def load_data(self, train:bool=True, person_list:Optional[list]=None, include_gravity:bool=True) -> tuple:
         """Sliding-Windowをロード
 
         Parameters
@@ -36,6 +36,8 @@ class UCIHAR(object):
             select train data or test data. if True then return train data.
         person_list: Option[list]
             specify persons.
+        include_gravity: bool
+            select whether or not include gravity information.
        
         Returns
         -------
@@ -47,16 +49,28 @@ class UCIHAR(object):
             the list of person id
         """
 
-        if train:
-            x = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_x_train.txt'), sep='\s+', header=None).to_numpy()
-            y = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_y_train.txt'), sep='\s+', header=None).to_numpy()
-            z = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_z_train.txt'), sep='\s+', header=None).to_numpy()
-            metas = self.train_metas
+        if include_gravity:
+            if train:
+                x = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'total_acc_x_train.txt'), sep='\s+', header=None).to_numpy()
+                y = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'total_acc_y_train.txt'), sep='\s+', header=None).to_numpy()
+                z = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'total_acc_z_train.txt'), sep='\s+', header=None).to_numpy()
+                metas = self.train_metas
+            else:
+                x = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'total_acc_x_test.txt'), sep='\s+', header=None).to_numpy()
+                y = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'total_acc_y_test.txt'), sep='\s+', header=None).to_numpy()
+                z = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'total_acc_z_test.txt'), sep='\s+', header=None).to_numpy()
+                metas = self.test_metas
         else:
-            x = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_x_test.txt'), sep='\s+', header=None).to_numpy()
-            y = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_y_test.txt'), sep='\s+', header=None).to_numpy()
-            z = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_z_test.txt'), sep='\s+', header=None).to_numpy()
-            metas = self.test_metas
+            if train:
+                x = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_x_train.txt'), sep='\s+', header=None).to_numpy()
+                y = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_y_train.txt'), sep='\s+', header=None).to_numpy()
+                z = pd.read_csv(str(self.ucihar_dir/'train'/'Inertial Signals'/'body_acc_z_train.txt'), sep='\s+', header=None).to_numpy()
+                metas = self.train_metas
+            else:
+                x = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_x_test.txt'), sep='\s+', header=None).to_numpy()
+                y = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_y_test.txt'), sep='\s+', header=None).to_numpy()
+                z = pd.read_csv(str(self.ucihar_dir/'test'/'Inertial Signals'/'body_acc_z_test.txt'), sep='\s+', header=None).to_numpy()
+                metas = self.test_metas
  
         flags = np.zeros((x.shape[0],), dtype=np.bool)
         if person_list is None: person_list = np.array(UCIHAR.all_person_id)
